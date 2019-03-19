@@ -1,4 +1,9 @@
 
 
-txtInput = open("input.txt", "r")
-print(txtInput.read())
+txtInput = open("input.txt", "r").read()
+listaInput = txtInput.split("\n")
+
+for i in listaInput:
+    
+
+print(txtInput)
