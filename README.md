@@ -1,2 +1,2 @@
 # STUND
-Software de Trelhiça Universitário Dinâmico 
+Software de Treliça Universitário Dinâmico 
