@@ -38,45 +38,61 @@ for i in range(len(listInput)-1):
             for j in range(1,numCoordenates+1):
                 listCoordenates.append(listInput[i+j+1])
             #Salva no dicionário com a chave sendo a letra respectiva e o valor a lista
-            dictInput[listInput[i][1]] = listCoordenates
+            dictInput["Coordinates"] = listCoordenates
         
         #O método se repete para todas as letras iniciais        
         elif (listInput[i][1] == 'E'):
             numElements = int(listInput[i+1])
             for j in range(1,numElements+1):
                 listElements.append(listInput[i+j+1])
-            dictInput[listInput[i][1]] = listElements
+            dictInput["Elements"] = listElements
 
         elif (listInput[i][1] == 'I'):
             for j in range(1,numElements+1):
                 listIncidences.append(listInput[i+j])
-            dictInput[listInput[i][1]] = listIncidences
+            dictInput["Incidences"] = listIncidences
         
         elif (listInput[i][1] == 'M'):
             numMaterials = int(listInput[i+1])
             for j in range(1,numMaterials+1):
                 listMaterials.append(listInput[i+j+1])
-            dictInput[listInput[i][1]] = listMaterials
+            dictInput["Material"] = listMaterials
         
         elif (listInput[i][1] == 'G'):
             numGeoProps = int(listInput[i+1])
             for j in range(1,numGeoProps+1):
                 listGeoProps.append(listInput[i+j+1])
-            dictInput[listInput[i][1]] = listGeoProps
+            dictInput["Geometric Properties"] = listGeoProps
         
         elif (listInput[i][1] == 'B'):
             numBCNodes = int(listInput[i+1])
             for j in range(1,numBCNodes+1):
                 listBCNodes.append(listInput[i+j+1])
-            dictInput[listInput[i][1]] = listBCNodes
+            dictInput["Restrictions"] = listBCNodes
         
         elif (listInput[i][1] == 'L'):
             numLoads = int(listInput[i+1])
             for j in range(1,numLoads+1):
                 listLoads.append(listInput[i+j+1])
-            dictInput[listInput[i][1]] = listLoads
+            dictInput["Loads"] = listLoads
+print(dictInput)            
+##############################################################################################################
 
 
-print(dictInput)
-    
 
+
+##############################################################################################################  
+#Escrevendo arquivo de saída
+
+output_file = open("output.txt", "w")
+output_file.write("*DISPLACEMENTS\n")
+output_file.write("resultados lalala\n\n")
+output_file.write("*ELEMENT_STRAINS\n")
+output_file.write("resultados lalala\n\n")
+output_file.write("*ELEMENT_STRESSES\n")
+output_file.write("resultados lalala\n\n")
+output_file.write("*REACTION_FORCES\n")
+output_file.write("resultados lalala\n\n")
+
+
+output_file.close()
