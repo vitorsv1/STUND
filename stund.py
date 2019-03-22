@@ -10,6 +10,8 @@
 # - Iago Mendes
 # ---------------------------------------------------------------------------------------------------
 
+import functions
+
 #Pegando input do arquivo e salvando numa lista ja separado por espaço
 txtInput = open("input.txt", "r").read()
 listInput = txtInput.split("\n")
