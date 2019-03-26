@@ -18,21 +18,35 @@ def height(m):
 def width(m):
   return len(m[0])
 
-def jacobi(A,b,N=25,x=None):
-    """Solves the equation Ax=b via the Jacobi iterative method."""
-    # Create an initial guess if needed                                                                                                                                                            
-    if x is None:
-        x = zeros(len(A[0]))
+def erro(x, i, Tol):
+    counter = 0
+    for n in range(len(x[i])):
+        if (x[i][n]==0): return False
+        erro = (x[i][n] - x[i-1][n]) / x[i][n]
+        if (abs(erro) < Tol):
+            counter += 1
+    if (counter == len(x[i])):
+        print('\nTolerância atingida')
+        return True
+    return False
 
-    # Create a vector of the diagonal elements of A                                                                                                                                                
-    # and subtract them from A                                                                                                                                                                     
-    D = diag(A)
-    R = A - diagflat(D)
+def jacobi(Ite,Tol,K,F):
+    numIte = 0
+    x = [[0]*len(K[0])]
+    for i in range(1, Ite):
+        x_step = [0]*len(K[0])
+        for n in range(len(K[0])):
+            x_step[n] = F[n]
+            for n_step in range(len(K[0])):
+                x_step[n] -= K[n][n_step] * x[i-1][n_step]
+            x_step[n] += K[n][n]*x[i-1][n]
+            x_step[n] /= K[n][n]
+        print(x_step)
+        x.append(x_step)
+        numIte = i
+        if erro(x, i, Tol): break
+    return x[-1], numIte + 1
 
-    # Iterate for N times                                                                                                                                                                          
-    for i in range(N):
-        x = (b - dot(R,x)) / D
-    return x
 
 def gauss_seidel(m, x0=None, eps=1e-5, max_iteration=100):
   """

@@ -1,0 +1,12 @@
+*DISPLACEMENTS
+resultados lalala
+
+*ELEMENT_STRAINS
+resultados lalala
+
+*ELEMENT_STRESSES
+resultados lalala
+
+*REACTION_FORCES
+resultados lalala
+

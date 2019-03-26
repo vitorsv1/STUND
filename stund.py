@@ -10,7 +10,7 @@
 # - Iago Mendes
 # ---------------------------------------------------------------------------------------------------
 
-import functions
+from functions import *
 
 #Pegando input do arquivo e salvando numa lista ja separado por espaço
 txtInput = open("input.txt", "r").read()
@@ -77,11 +77,18 @@ for i in range(len(listInput)-1):
             for j in range(1,numLoads+1):
                 listLoads.append(listInput[i+j+1])
             dictInput["Loads"] = listLoads
-print(dictInput)            
+#print(dictInput)            
 ##############################################################################################################
 
+if __name__ == '__main__':
+    m = [[1.59, -0.4, -0.54], [-0.4, 1.7, 0.4], [-0.54, 0.4, 0.54]]
+    m = [[i * 1e8 for i in j] for j in m]
 
+    F = [0, 150, -100]
 
+    r1, r2 = jacobi(50, 0.0001, m, F)
+
+    print(f'\nResultado: {r1}\nIterações: {r2}')
 
 ##############################################################################################################  
 #Escrevendo arquivo de saída
