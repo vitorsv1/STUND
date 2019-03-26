@@ -6,6 +6,12 @@
 # U: vetor solução do sistema de equações.
 # Erro: Erro associado.
 
+class Truss:
+  def __init__(self, fileName, dictio={}):
+    self.fileName = fileName
+    self.dict = dictio
+
+
 def column(m, c):
   return [m[i][c] for i in range(len(m))]
  
