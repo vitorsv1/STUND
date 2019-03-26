@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
     F = [0, 150, -100]
 
-    r1, r2 = jacobi(50, 0.0001, m, F)
+    r1, r2 = gauss_seidel(50, 0.000001, m, F)
 
     print(f'\nResultado: {r1}\nIterações: {r2}')
 

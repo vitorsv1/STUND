@@ -54,34 +54,21 @@ def jacobi(Ite,Tol,K,F):
     return x[-1], numIte + 1
 
 
-def gauss_seidel(m, x0=None, eps=1e-5, max_iteration=100):
-  """
-  Parameters
-  ----------
-  m  : list of list of floats : coefficient matrix
-  x0 : list of floats : initial guess
-  eps: float : error tolerance
-  max_iteration: int
-  
-  Returns
-  -------  
-  list of floats
-      solution to the system of linear equation
-  
-  Raises
-  ------
-  ValueError
-      Solution does not converge
-  """
-  n  = height(m)
-  x0 = [0] * n if x0 == None else x0
-  x1 = x0[:]
-
-  for __ in range(max_iteration):
-    for i in range(n):
-      s = sum(-m[i][j] * x1[j] for j in range(n) if i != j) 
-      x1[i] = (m[i][n] + s) / m[i][i]
-    if all(abs(x1[i]-x0[i]) < eps for i in range(n)):
-      return x1 
-    x0 = x1[:]    
-  raise ValueError('Solution does not converge')    
+def gauss_seidel(Ite,Tol,K,F):
+  numIte = 0
+  current_X = [0]*len(K[0])
+  x = [current_X]
+  for i in range(1, Ite):
+      x_step = [0]*len(K[0])
+      for n in range(len(K[0])):
+          x_step[n] = F[n]
+          for n_step in range(len(K[0])):
+              x_step[n] -= K[n][n_step] * current_X[n_step]
+          x_step[n] += K[n][n] * current_X[n]
+          x_step[n] /= K[n][n]
+          current_X[n] = x_step[n]
+      print(x_step)
+      x.append(x_step)
+      numIte = i
+      if erro(x, i, Tol): break
+  return x[-1], numIte + 1
