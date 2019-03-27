@@ -10,7 +10,7 @@
 # - Vitor Satyro
 # ---------------------------------------------------------------------------------------------------
 
-import functions
+from functions import *
 import math
 
 #Pegando input do arquivo e salvando numa lista ja separado por espaço

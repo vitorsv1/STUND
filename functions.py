@@ -1,5 +1,3 @@
-
-
 # Implementar uma função para solução numérica do sistema de equações obtido na análise estrutural de treliças
 # planas. (Met.Jacobi e Gauss-Seidel)
 # Função retorna 
@@ -10,7 +8,6 @@ class Truss:
   def __init__(self, fileName, dictio={}):
     self.fileName = fileName
     self.dict = dictio
-
 
 def column(m, c):
   return [m[i][c] for i in range(len(m))]
@@ -52,7 +49,6 @@ def jacobi(Ite,Tol,K,F):
         numIte = i
         if erro(x, i, Tol): break
     return x[-1], numIte + 1
-
 
 def gauss_seidel(Ite,Tol,K,F):
   numIte = 0
