@@ -88,6 +88,8 @@ for i in range(len(listInput)-1):
 # Passo 4: Montar o K Global (Numero de pontos * 2)
 # Passo 5: Cortar as restrições na matriz K Global
 
+print(listCoordenates)
+
 lista_k = []
 material = 0
 for incidencia in listIncidences:
@@ -103,21 +105,26 @@ for incidencia in listIncidences:
             coordenada2 = [float(ponto[1]), float(ponto[2])]
 
     distancia = math.sqrt((coordenada2[0] - coordenada1[0])**2 + (coordenada2[1] - coordenada1[1])**2)
-    cos = coordenada1[0] - coordenada2[0] / distancia   #cos = coordenada2[0] - coordenada1[0] / distancia
-    sen = coordenada1[1] - coordenada2[1] / distancia   #sen = coordenada2[1] - coordenada1[1] / distancia
+    cos = (coordenada1[0] - coordenada2[0]) / distancia   
+    sen = (coordenada1[1] - coordenada2[1]) / distancia 
 
     modulo_elasticidade = float(listMaterials[material].split(' ')[0])
     area = float(listGeoProps[material].split(' ')[0])
+    constante = (modulo_elasticidade * area) / distancia
 
-    c = (cos**2) * modulo_elasticidade * area / distancia
-    cs = (cos*sen) * modulo_elasticidade * area / distancia
-    s = (sen**2) * modulo_elasticidade * area / distancia
+    c = (cos**2) * constante
+    cs = (cos*sen) * constante
+    s = (sen**2) * constante
 
+    print("\nBarra: " + str(material+1))
+    print("c: " + str(c))
+    print("cs: " + str(cs))
+    print("s: " + str(s))
     lista_ki = [[c, cs, -c, -cs],
                 [cs, s, -cs, -s],
                 [-c, cs, c, cs],
                 [-cs, -s, cs, s]]
-    print(lista_ki)
+
     lista_k.append(lista_ki)
     material += 1 
 
