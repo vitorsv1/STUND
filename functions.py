@@ -4,23 +4,13 @@
 # U: vetor solução do sistema de equações.
 # Erro: Erro associado.
 
+#Classe das treliças
 class Truss:
   def __init__(self, fileName, dictio={}):
     self.fileName = fileName
     self.dict = dictio
 
-def column(m, c):
-  return [m[i][c] for i in range(len(m))]
- 
-def row(m, r):
-  return m[r][:]
-  
-def height(m):
-  return len(m)
-  
-def width(m):
-  return len(m[0])
-
+#Calcula o erro e comparada com a tolerância
 def erro(x, i, Tol):
     counter = 0
     for n in range(len(x[i])):
@@ -33,6 +23,7 @@ def erro(x, i, Tol):
         return True
     return False
 
+#Método Jacobi de resolução
 def jacobi(Ite,Tol,K,F):
     numIte = 0
     x = [[0]*len(K[0])]
@@ -50,6 +41,7 @@ def jacobi(Ite,Tol,K,F):
         if erro(x, i, Tol): break
     return x[-1], numIte + 1
 
+#Método Gauss Seidel de resolução
 def gauss_seidel(Ite,Tol,K,F):
   numIte = 0
   current_X = [0]*len(K[0])
