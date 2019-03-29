@@ -14,7 +14,7 @@ from functions import *
 import math
 import numpy as np
 #Pegando input do arquivo e salvando numa lista ja separado por espaço
-txtInput = open("input.txt", "r").read()
+txtInput = open("arquivodeentrada.fem", "r").read()
 listInput = txtInput.split("\n")
 
 #Listas que serão salvas no dicionário
@@ -78,7 +78,7 @@ for i in range(len(listInput)-1):
             for j in range(1,numLoads+1):
                 listLoads.append(listInput[i+j+1])
             dictInput["Loads"] = listLoads
-#print(dictInput)
+print(dictInput)
             
 ##############################################################################################################
 
@@ -177,7 +177,7 @@ print(r1)
 ##############################################################################################################  
 #Escrevendo arquivo de saída
 
-output_file = open("output.txt", "w")
+output_file = open("arquivoSaida.out", "w")
 
 output_file.write("*DISPLACEMENTS\n")
 output_file.write("resultados lalala\n\n")
