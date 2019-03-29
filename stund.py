@@ -78,10 +78,9 @@ for i in range(len(listInput)-1):
             for j in range(1,numLoads+1):
                 listLoads.append(listInput[i+j+1])
             dictInput["Loads"] = listLoads
-print(dictInput)
+#print(dictInput)
             
 ##############################################################################################################
-
 # Passo 1: Pegar os dois pontos da incidencia, uma incidencia é igual a um K
 # Passo 2: Com as Coord do ponto, calcular sen e cos e distancia
 # Passo 3: Montar a matriz de cada K e preencher numa lista_K
@@ -93,6 +92,22 @@ dimensao = len(listCoordenates) * 2
 k_global = np.zeros((dimensao, dimensao))
 k_global = k_global.tolist()
 
+#Faz o vetor de forças
+F = np.zeros((dimensao, 1))
+for forca in listLoads:
+    forca = forca.split(' ')
+    for ponto in listCoordenates:
+        ponto = ponto.split(' ')
+        if ponto[0] == forca[0]:
+            coordenada = [float(ponto[1]), float(ponto[2])]
+            if forca[1] == '2':
+                incidencia = (int(ponto[0]) - 1)*2 + 2
+            elif forca[1] == '1':
+                incidencia = (int(ponto[0]) - 1)*2 + 1
+    F[incidencia-1] = forca[2]
+
+barra = {}
+#Faz a matriz global
 material = 0
 for incidencia in listIncidences:
     incidencia = incidencia.split(' ')
@@ -105,7 +120,6 @@ for incidencia in listIncidences:
             coordenada1 = [float(ponto[1]), float(ponto[2])]
             incidencia1 = (int(ponto[0]) - 1)*2 + 1
             incidencia2 = (int(ponto[0]) - 1)*2 + 2
-
         elif ponto[0] == ponto2:
             coordenada2 = [float(ponto[1]), float(ponto[2])]
             incidencia3 = (int(ponto[0]) - 1)*2 + 1
@@ -119,6 +133,7 @@ for incidencia in listIncidences:
     modulo_elasticidade = float(listMaterials[material].split(' ')[0])
     area = float(listGeoProps[material].split(' ')[0])
     constante = (modulo_elasticidade * area) / distancia
+    barra[int(incidencia[0])] = [distancia, cos, sen, modulo_elasticidade, incidencias]
 
     c = (cos**2) * constante
     cs = (cos*sen) * constante
@@ -137,42 +152,57 @@ for incidencia in listIncidences:
             coluna +=1
         linha += 1
     material += 1 
-
 k_global = np.matrix(k_global)
+
+#Monta a lista com restrições
 restricao = []
 for delete in listBCNodes:
     restricao.append((int(delete[0])-1)*2 + int(delete[2])-1)
-
 restricao = np.flip(np.sort(restricao), 0)
 
-k_global = np.delete(k_global, (restricao), axis=0) #deleta linha
-k_global = np.delete(k_global, (restricao), axis=1) #deleta coluna
-k_global = k_global.tolist()
+#Faz as restrições na matriz global e salva em k_restrito
+k_restrito = np.delete(k_global, (restricao), axis=0) #deleta linha
+k_restrito = np.delete(k_restrito, (restricao), axis=1) #deleta coluna
+k_restrito = k_restrito.tolist()
 
-F = np.zeros((dimensao, 1))
-
-for forca in listLoads:
-    forca = forca.split(' ')
-
-    for ponto in listCoordenates:
-        ponto = ponto.split(' ')
-        if ponto[0] == forca[0]:
-            coordenada = [float(ponto[1]), float(ponto[2])]
-            if forca[1] == '2':
-                incidencia = (int(ponto[0]) - 1)*2 + 2
-            elif forca[1] == '1':
-                incidencia = (int(ponto[0]) - 1)*2 + 1
-    
-    F[incidencia-1] = forca[2]
-
+#Restrições na matriz força
 F = np.delete(F, (restricao), axis=0) #deleta linha
 F2 = []
 for i in range(len(F)):
     F2.append(F[i][0])
 
-r1, r2 = gauss_seidel(50, 0.000001, k_global, F2)
+u_restrito, r2 = gauss_seidel(50, 0.000001, k_restrito, F2)
+u_final = np.zeros((dimensao, 1))
+u_final = u_final.tolist()
+i=0
+nao_restricao = []
+for r in range(len(u_final)):
+    if r not in restricao:
+        u_final[r] = (u_restrito[i])
+        i += 1
+        nao_restricao.append(r)
+    if r in restricao:
+        u_final[r] = 0
 
-print(r1)
+#k global sem restrições * u completo = forças 
+forcas = np.dot(u_final, k_global)
+forcas = np.delete(forcas, (nao_restricao), axis=1).round(3) #FORMATAR PARA O ARQUIVO DE SAIDA
+
+deformacoes = []
+tensao = []
+for i in barra:
+    cos, sen = barra[i][1], barra[i][2]
+    # print(cos, sen)
+    indices = barra[i][4]
+    # print(indices)
+    x = np.array([u_final[indices[0]-1], u_final[indices[1]-1], u_final[indices[2]-1], u_final[indices[3]-1]])
+    matriz = np.array([-cos, -sen, cos, sen])
+    # print(x)
+    # print(matriz)
+    deformacao = (1/barra[i][0])*np.dot(matriz,x)
+    
+    deformacoes.append(deformacao)
+    tensao.append(deformacao * barra[i][3])
 
 ##############################################################################################################  
 #Escrevendo arquivo de saída
