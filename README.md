@@ -4,7 +4,7 @@ Software de Treliça Universitário Dinâmico
 Desenvolvido por um grupo de estudantes universitários do Insper/SP, o STUND tem como premissa funcionar como uma API e/ou uma interface gráfica para análise matricial de estruturas baseadas em treliças.
 
 ## API
-A STUND API é escrita em Python e serve para fazer todos os cálculos do programa; Nela, é possível inserir um arquivo .txt nos seguintes moldes:
+A STUND API é escrita em Python e serve para fazer todos os cálculos do programa; Nela, é possível inserir um arquivo .fem nos seguintes moldes:
 
 ```
 *COORDINATES
@@ -42,7 +42,7 @@ A STUND API é escrita em Python e serve para fazer todos os cálculos do progra
 3 2 -100
 ```
 
-A resposta da API vem na medida de:
+A resposta da API vem na medida de um arquivo .out com:
 
 ```
 *DISPLACEMENTS
