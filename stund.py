@@ -107,6 +107,7 @@ for forca in listLoads:
     F[incidencia-1] = forca[2]
 
 barra = {}
+
 #Faz a matriz global
 material = 0
 for incidencia in listIncidences:
@@ -184,11 +185,7 @@ for r in range(len(u_final)):
     if r in restricao:
         u_final[r] = 0
 
-#k global sem restrições * u completo = forças 
-forcas = np.dot(u_final, k_global)
-forcas = np.delete(forcas, (nao_restricao), axis=1).round(3) #FORMATAR PARA O ARQUIVO DE SAIDA
-
-deformacoes = []
+deformacoes = [] 
 tensao = []
 for i in barra:
     cos, sen = barra[i][1], barra[i][2]
@@ -204,19 +201,48 @@ for i in barra:
     deformacoes.append(deformacao)
     tensao.append(deformacao * barra[i][3])
 
+#k global sem restrições * u completo = forças 
+forcas = np.dot(u_final, k_global)
+forcas = forcas.tolist()
+# forcas = np.delete(forcas, (nao_restricao), axis=1).round(3)
+forcas_format = forcas[0]
+for i in range(len(forcas_format)):
+    if i not in restricao:
+        forcas_format[i] = 0
+
 ##############################################################################################################  
 #Escrevendo arquivo de saída
-
 output_file = open("arquivoSaida.out", "w")
 
 output_file.write("*DISPLACEMENTS\n")
-output_file.write("resultados lalala\n\n")
-output_file.write("*ELEMENT_STRAINS\n")
-output_file.write("resultados lalala\n\n")
-output_file.write("*ELEMENT_STRESSES\n")
-output_file.write("resultados lalala\n\n")
-output_file.write("*REACTION_FORCES\n")
-output_file.write("resultados lalala\n\n")
+for ponto in listCoordenates:
+    ponto = ponto.split(' ')
+    incidencia1 = (int(ponto[0]) - 1)*2 + 1
+    incidencia2 = (int(ponto[0]) - 1)*2 + 2
+    output_file.write(str(ponto[0]) + ' ' + str(u_final[incidencia1-1]) + ' ' + str(u_final[incidencia2-1]) + '\n')
 
+output_file.write("\n*ELEMENT_STRAINS\n")
+for i in range(len(deformacoes)):
+    output_file.write(str(i+1) + ' ' + str(deformacoes[i]*(-1)) + '\n')
+
+output_file.write("\n*ELEMENT_STRESSES\n")
+for i in range(len(deformacoes)):
+    output_file.write(str(i+1) + ' ' + str(tensao[i]*(-1)) + '\n')
+
+output_file.write("\n*REACTION_FORCES\n")
+for i in range(len(forcas_format)):
+    if int(forcas_format[i]) != 0:
+        if i%2==0:
+            if i == 0:
+                output_file.write(str(1) + ' FX = ' + str(forcas_format[i]) + '\n')    
+            else:
+                ponto = math.ceil(((i-1)/2)+1)
+                output_file.write(str(ponto) + ' FX = ' + str(forcas_format[i]) + '\n')
+        else:
+            if i == 1:
+                output_file.write(str(1) + ' FY = ' + str(forcas_format[i]) + '\n')    
+            else:
+                ponto = math.ceil(((i-2)/2)+1)
+                output_file.write(str(ponto) + ' FY = ' + str(forcas_format[i]) + '\n')
 
 output_file.close()
