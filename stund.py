@@ -12,7 +12,7 @@
 
 from functions import *
 import math
-
+import numpy as np
 #Pegando input do arquivo e salvando numa lista ja separado por espaço
 txtInput = open("input.txt", "r").read()
 listInput = txtInput.split("\n")
@@ -88,9 +88,11 @@ for i in range(len(listInput)-1):
 # Passo 4: Montar o K Global (Numero de pontos * 2)
 # Passo 5: Cortar as restrições na matriz K Global
 
-print(listCoordenates)
+# Montar matriz cheia de zeros
+dimensao = len(listCoordenates) * 2
+k_global = np.zeros((dimensao, dimensao))
+k_global = k_global.tolist()
 
-lista_k = []
 material = 0
 for incidencia in listIncidences:
     incidencia = incidencia.split(' ')
@@ -101,9 +103,15 @@ for incidencia in listIncidences:
         ponto = ponto.split(' ')
         if ponto[0] == ponto1:
             coordenada1 = [float(ponto[1]), float(ponto[2])]
+            incidencia1 = (int(ponto[0]) - 1)*2 + 1
+            incidencia2 = (int(ponto[0]) - 1)*2 + 2
+
         elif ponto[0] == ponto2:
             coordenada2 = [float(ponto[1]), float(ponto[2])]
+            incidencia3 = (int(ponto[0]) - 1)*2 + 1
+            incidencia4 = (int(ponto[0]) - 1)*2 + 2
 
+    incidencias = [incidencia1,incidencia2,incidencia3,incidencia4]
     distancia = math.sqrt((coordenada2[0] - coordenada1[0])**2 + (coordenada2[1] - coordenada1[1])**2)
     cos = (coordenada1[0] - coordenada2[0]) / distancia   
     sen = (coordenada1[1] - coordenada2[1]) / distancia 
@@ -116,17 +124,55 @@ for incidencia in listIncidences:
     cs = (cos*sen) * constante
     s = (sen**2) * constante
 
-    print("\nBarra: " + str(material+1))
-    print("c: " + str(c))
-    print("cs: " + str(cs))
-    print("s: " + str(s))
-    lista_ki = [[c, cs, -c, -cs],
-                [cs, s, -cs, -s],
-                [-c, cs, c, cs],
-                [-cs, -s, cs, s]]
+    lista_ki = [[  c, cs, -c,-cs],
+                [ cs,  s,-cs, -s],
+                [ -c, cs,  c, cs],
+                [-cs, -s, cs,  s]]
 
-    lista_k.append(lista_ki)
+    linha = 0
+    for i in incidencias:
+        coluna = 0
+        for j in incidencias:
+            k_global[i-1][j-1] += lista_ki[linha][coluna]
+            coluna +=1
+        linha += 1
     material += 1 
+
+k_global = np.matrix(k_global)
+restricao = []
+for delete in listBCNodes:
+    restricao.append((int(delete[0])-1)*2 + int(delete[2])-1)
+
+restricao = np.flip(np.sort(restricao), 0)
+
+k_global = np.delete(k_global, (restricao), axis=0) #deleta linha
+k_global = np.delete(k_global, (restricao), axis=1) #deleta coluna
+k_global = k_global.tolist()
+
+F = np.zeros((dimensao, 1))
+
+for forca in listLoads:
+    forca = forca.split(' ')
+
+    for ponto in listCoordenates:
+        ponto = ponto.split(' ')
+        if ponto[0] == forca[0]:
+            coordenada = [float(ponto[1]), float(ponto[2])]
+            if forca[1] == '2':
+                incidencia = (int(ponto[0]) - 1)*2 + 2
+            elif forca[1] == '1':
+                incidencia = (int(ponto[0]) - 1)*2 + 1
+    
+    F[incidencia-1] = forca[2]
+
+F = np.delete(F, (restricao), axis=0) #deleta linha
+F2 = []
+for i in range(len(F)):
+    F2.append(F[i][0])
+
+r1, r2 = gauss_seidel(50, 0.000001, k_global, F2)
+
+print(r1)
 
 ##############################################################################################################  
 #Escrevendo arquivo de saída

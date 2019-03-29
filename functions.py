@@ -19,7 +19,7 @@ def erro(x, i, Tol):
         if (abs(erro) < Tol):
             counter += 1
     if (counter == len(x[i])):
-        print('\nTolerância atingida')
+        #print('\nTolerância atingida')
         return True
     return False
 
@@ -35,7 +35,7 @@ def jacobi(Ite,Tol,K,F):
                 x_step[n] -= K[n][n_step] * x[i-1][n_step]
             x_step[n] += K[n][n]*x[i-1][n]
             x_step[n] /= K[n][n]
-        print(x_step)
+        #print(x_step)
         x.append(x_step)
         numIte = i
         if erro(x, i, Tol): break
@@ -55,7 +55,7 @@ def gauss_seidel(Ite,Tol,K,F):
           x_step[n] += K[n][n] * current_X[n]
           x_step[n] /= K[n][n]
           current_X[n] = x_step[n]
-      print(x_step)
+      #print(x_step)
       x.append(x_step)
       numIte = i
       if erro(x, i, Tol): break
