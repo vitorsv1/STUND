@@ -2,7 +2,6 @@ from tkinter import filedialog
 from tkinter import *
 from tkinter import ttk
 import webbrowser
-from PIL import ImageTk, Image
 import os
 import numpy as np
 
