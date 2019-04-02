@@ -12,7 +12,6 @@
 
 from functions import *
 import math
-import random
 import numpy as np
 # Pegando input do arquivo e salvando numa lista ja separado por espaço
 
