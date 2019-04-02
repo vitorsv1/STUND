@@ -135,7 +135,7 @@ lbl1.pack()
 
 selectedFile = "aah"
 selected = Entry()
-selected.insert(0, "arquivoentrada.fem")
+selected.insert(0, "arquivodeentrada.fem")
 selected.pack()
 button1 = Button(root, text='Selecione o arquivo texto',
                  highlightbackground='#3E4149', command=openFile)
