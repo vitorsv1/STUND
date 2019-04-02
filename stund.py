@@ -12,6 +12,7 @@
 
 from functions import *
 import math
+import random
 import numpy as np
 # Pegando input do arquivo e salvando numa lista ja separado por espaço
 
@@ -249,8 +250,10 @@ def main(file="arquivodeentrada.fem", funcType=1, ite=80):
         incidencia1 = (int(ponto[0]) - 1)*2 + 1
         incidencia2 = (int(ponto[0]) - 1)*2 + 2
         listPoints.append([float(ponto[1]), float(ponto[2])])
+
         listDisplaced.append(
-            [float(ponto[1])+float(u_final[incidencia1-1]), float(ponto[2])+float(u_final[incidencia2-1])])
+            [float(ponto[1])+float(u_final[incidencia1-1])*1000, float(ponto[2])+float(u_final[incidencia2-1])*1000])
+
         output_file.write(str(ponto[0]) + ' ' + str(u_final[incidencia1-1]
                                                     ) + ' ' + str(u_final[incidencia2-1]) + '\n')
 
