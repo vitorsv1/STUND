@@ -4,6 +4,9 @@ from tkinter import ttk
 import webbrowser
 from PIL import ImageTk, Image
 import os
+import numpy as np
+
+import stund
 
 import plot
 
@@ -12,12 +15,57 @@ def donothing():
     x = 0
 
 
-def callback():
-    plot.plotExample()
+def callbackStress():
+
+    if(ans[0].get() == 1):
+        title = "Gauss"
+    else:
+        title = "Jacobi"
+
+    fileName = selected.get()
+    print(fileName)
+    int_answer = int(AnswerBox.get())
+    plotDictionary = stund.main(
+        file=fileName, funcType=ans[0].get(), ite=int_answer)
+    elemNodes = np.array(plotDictionary["Barras"])-1
+    nodeCords = np.array(plotDictionary["Pontos"])
+    stress = np.array(plotDictionary["Deformacoes"])*(-1)
+    ite = str(plotDictionary["Iteracoes"])
+
+    print(ite)
+    # print(elemNodes)
+    # print(stress)
+    plot.displayTruss(elemNodes, nodeCords, stress, 'Tensão', ite, title=title)
+
+
+def callbackDeformation():
+
+    if(ans[0].get() == 1):
+        title = "Gauss"
+    else:
+        title = "Jacobi"
+
+    fileName = selected.get()
+    print(fileName)
+    int_answer = int(AnswerBox.get())
+    print(int_answer)
+    plotDictionary = stund.main(
+        file=fileName, funcType=ans[0].get(), ite=int_answer)
+    elemNodes = (np.array(plotDictionary["Barras"])-1)
+    nodeCords = np.array(plotDictionary["Deformados"])
+    ite = str(plotDictionary["Iteracoes"])
+    stress = []
+    for i in range(len(elemNodes)):
+        stress.append(0)
+    plot.displayTrussDeformation(
+        elemNodes, nodeCords, stress, 'Deformacao', ite=ite, title=title)
 
 
 def openFile():
-    file = filedialog.askopenfile(mode='rb', title='Select a file')
+    selectedFile = filedialog.askopenfile(mode='rb', filetypes=(
+        ("Text File", "*.fem"), ("All Files", "*.*")), title='Select a file')
+    selected.delete(0, END)
+    selected.insert(0, str(selectedFile.name))
 
 
 def callbackWeb():
@@ -53,6 +101,8 @@ root.configure(background='#3E4149')
 menubar = Menu(root)
 
 # File
+
+
 filemenu = Menu(menubar, tearoff=0)
 filemenu.add_command(label="Salvar", command=donothing)
 filemenu.add_separator()
@@ -83,19 +133,36 @@ lbl1 = Label(root, text=tutorialText,
              background='#3E4149', foreground='#eeeeee')
 lbl1.pack()
 
-
+selectedFile = "aah"
+selected = Entry()
+selected.insert(0, "arquivoentrada.fem")
+selected.pack()
 button1 = Button(root, text='Selecione o arquivo texto',
                  highlightbackground='#3E4149', command=openFile)
 button1.pack()
 
+
+subtitle = Label(root, text="\n \n Número máximo de iterações (padrão 80)",
+                 background='#3E4149', foreground='#eeeeee')
+subtitle.pack()
+AnswerBox = Entry()
+AnswerBox.insert(0, 80)
+AnswerBox.pack()
+
+ans = []
 for text, mode in MODES:
     b = Radiobutton(root, text=text,
                     variable=v, value=mode, highlightbackground='#3E4149', background='#3E4149')
+    ans.append(v)
     b.pack()
 
-b = Button(root, text="Criar gráfico",
-           highlightbackground='#3E4149', command=callback)
-b.pack()
+cb = Button(root, text="Criar gráfico de tensão",
+            highlightbackground='#3E4149', command=callbackStress)
+cb.pack()
+
+cb = Button(root, text="Criar gráfico de deformação",
+            highlightbackground='#3E4149', command=callbackDeformation)
+cb.pack()
 
 # file = filedialog.askopenfile(mode='rb', title='Select a file')
 
